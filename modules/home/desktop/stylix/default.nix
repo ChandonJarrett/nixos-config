@@ -24,21 +24,22 @@
             
             orange: #F18C58
             red: #C91931
-            purple: #876FBE
+            purple: #
+            
         */
 
         base16Scheme = {
             # Backgrounds
-            base00 = "222023"; # background #222023
-            base01 = "322F33"; # lighter bg #322F33
-            base02 = "3F3C41"; # selection bg #3F3C41
+            base00 = "1b191c"; # background #1b191c
+            base01 = "222023"; # lighter bg #222023
+            base02 = "2E2C2F"; # selection bg #2E2C2F
             base03 = "545255"; # comments #545255
 
             # Foregrounds
-            base04 = "908D91"; # dark fg #908D91
-            base05 = "F7F5F5"; # foreground #F7F5F5
-            base06 = "EDE9F2"; # light fg #EDE9F2
-            base07 = "F5F2FA"; #lightest fg #F5F2FA
+            base04 = "767477"; # dark fg #767477
+            base05 = "908d91"; # foreground #908d91
+            base06 = "b3adb6"; # light fg #b3adb6
+            base07 = "ccc5d0"; #lightest fg #ccc5d0
 
             base08 = "C91931"; # red #C91931
             base09 = "F18C58"; # orange #F18C58

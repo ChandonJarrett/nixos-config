@@ -19,9 +19,9 @@
 
             format = lib.replaceStrings ["\n"] [""] ''
             [╭─](bold light_purple)
-            [](gray)
-            [](bold fg:light_purple bg:gray)
-            [ ](fg:gray bg:purple)
+            [](dark-gray)
+            [](bold fg:light_purple bg:dark-gray)
+            [ ](fg:dark-gray bg:purple)
             $directory
             [ ](fg:purple bg:dark_purple)
             $git_branch

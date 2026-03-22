@@ -44,7 +44,7 @@
       # Fuzzy matching
       fuzzy = {
         use_typo_resistance = true;   # Still matches if you mistype slightly
-        use_frecency = true;          # Ranks items you use more often higher
+        frecency.enabled = true;      # Ranks items you use more often higher
         use_proximity = true;         # Ranks nearby variables higher
       };
     };
