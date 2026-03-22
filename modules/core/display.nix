@@ -26,6 +26,7 @@
 		xserver = {
 			enable = true;
 			xkb.layout = "us";
+			xkb.options = "caps:escape"; # Caps Lock = Escape key
 		};
 	
 		displayManager.autoLogin = {

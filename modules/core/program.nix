@@ -22,7 +22,7 @@
 		firefox = {
 			enable = true;
 			preferences = {
-				"layout.css.devPixelsPerPx" = "1.25";
+				"layout.css.devPixelsPerPx" = "1.3";
 			};
 
 			policies = {

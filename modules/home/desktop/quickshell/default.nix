@@ -1,8 +1,33 @@
-{ host, lib, pkgs, inputs, ... }:
+{ host, lib, pkgs, inputs, config, ... }:
 {
     imports = [
         inputs.dms.homeModules.dank-material-shell
     ];
+
+    home.file.".config/DankMaterialShell/chan-theme.json".text = builtins.toJSON {
+        dark = {
+            name = "Chan";
+            primary = "#876FBE";
+            primaryText = "#F7F5F5";
+            primaryContainer = "#453371";
+            secondary = "#A18ECC";
+            surfaceTint = "#876FBE";
+            surface = "#2D2A2E";
+            surfaceText = "#F7F5F5";
+            surfaceVariant = "#343135";
+            surfaceVariantText = "#908D91";
+            surfaceContainer = "#413D42";
+            surfaceContainerHigh = "#545255";
+            surfaceContainerHighest = "#636064";
+            background = "#222023";
+            backgroundText = "#F7F5F5";
+            outline = "#545255";
+            error = "#C91931";
+            warning = "#F18C58";
+            info = "#A18ECC";
+            matugen_type = "scheme-tonal-spot";
+        };
+    };
 
     programs.dank-material-shell = {
         enable = true;
@@ -22,7 +47,8 @@
 
         settings = {
             # Appearance
-            currentThemeName = "purple";
+            currentThemeName = "custom";
+            customThemeFile = "${config.home.homeDirectory}/.config/DankMaterialShell/chan-theme.json";
             popupTransparency = 0.7;
             cornerRadius = 14;
             fontFamily = "Noto Sans";

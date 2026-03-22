@@ -1,5 +1,10 @@
-{ ... }:
+{ pkgs, ... }:
 {
+  
+  home.packages = with pkgs; [
+    gitui
+  ];
+
   programs.git = {
     enable = true;
 

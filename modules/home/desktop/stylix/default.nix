@@ -28,25 +28,27 @@
         */
 
         base16Scheme = {
+            # Backgrounds
             base00 = "222023"; # background #222023
-            base01 = "343135"; # lighter bg #343135
-            base02 = "3E3B40"; # selecrion bg #3E3B40
-            base03 = "927777"; # comments #676468
-            base04 = "AD9999"; #AD9999
+            base01 = "322F33"; # lighter bg #322F33
+            base02 = "3F3C41"; # selection bg #3F3C41
+            base03 = "545255"; # comments #545255
+
+            # Foregrounds
+            base04 = "908D91"; # dark fg #908D91
             base05 = "F7F5F5"; # foreground #F7F5F5
-            base06 = "67626A"; #67626A
-            base07 = "726C75"; #726C75
+            base06 = "EDE9F2"; # light fg #EDE9F2
+            base07 = "F5F2FA"; #lightest fg #F5F2FA
 
-            base08 = "9580C6"; # red #9580C6
-            base09 = "EE6F2F"; # orange #EE6F2F
-            base0A = "F18C58"; # yellow #F18C58
-            base0B = "B8ABD9"; # green #B8ABD9
-            base0C = "7256B3"; # cyan #7256B3
-            base0D = "9580C6"; # blue #E13D5E
-            base0E = "E6607B"; # purple #E6607B
-            base0F = "BD490F"; # brown #BD490F
+            base08 = "C91931"; # red #C91931
+            base09 = "F18C58"; # orange #F18C58
+            base0A = "D4A030"; # yellow #D4A030
+            base0B = "6BAF92"; # green #6BAF92
+            base0C = "4FA8C0"; # cyan #4FA8C0
+            base0D = "876FBE"; # blue #876FBE
+            base0E = "A18ECC"; # purple #A18ECC
+            base0F = "9E3B1A"; # brown #9E3B1A
         };
-
 
 
         opacity = {
