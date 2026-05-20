@@ -1,0 +1,68 @@
+/* Basic ReGreet theme using the Nix base colors. */
+
+@define-color background #1b191c;
+@define-color background-alt #232124;
+@define-color border #333134;
+@define-color foreground #ccc5d0;
+@define-color foreground-dim #908d91;
+@define-color accent #876fbe;
+
+* {
+  color: @foreground;
+}
+
+window,
+window > box {
+  background-color: @background;
+}
+
+window > box {
+  padding: 48px;
+}
+
+entry,
+button,
+combobox,
+dropdown {
+  background-color: @background-alt;
+  border: 1px solid @border;
+  border-radius: 12px;
+  box-shadow: none;
+  padding: 8px 12px;
+}
+
+button {
+  background-image: none;
+}
+
+button:hover,
+button:focus,
+entry:focus,
+combobox:focus,
+dropdown:focus {
+  border-color: @accent;
+}
+
+button:checked,
+button:active {
+  background-color: @accent;
+  color: @background;
+}
+
+label {
+  color: @foreground;
+}
+
+label.dim-label {
+  color: @foreground-dim;
+}
+
+list,
+list row {
+  background-color: @background-alt;
+  border-radius: 12px;
+}
+
+list row:selected {
+  background-color: @border;
+}

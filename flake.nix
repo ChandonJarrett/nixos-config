@@ -1,64 +1,45 @@
 {
-	description = "Chan's NixOS Configuration";
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-	inputs = {
-		nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-		# nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.11";
-		
-		# nix-gaming.url = "github:fufexan/nix-gaming";
-		# nix-flatpak.url = "github:gmodena/nix-flatpak";
+    # Module imports system and helpers
+    flake-parts.url = "github:hercules-ci/flake-parts";
 
-		home-manager = {
-			url = "github:nix-community/home-manager";
-			inputs.nixpkgs.follows = "nixpkgs";
-		};
+    # System-wide nix-index database
+    nix-index-database = {
+      url = "github:Mic92/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-		hyprland = {
-			url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
-			inputs.nixpkgs.follows = "nixpkgs";
-		};
+    # Package wrapping framework
+    wrappers.url = "github:Lassulus/wrappers";
+    wrapper-modules.url = "github:BirdeeHub/nix-wrapper-modules";
 
-		quickshell = {
-			url = "git+https://git.outfoxxed.me/quickshell/quickshell";
-			inputs.nixpkgs.follows = "nixpkgs";
-		};
+    # Home configuration helper
+    hjem = {
+      url = "github:feel-co/hjem";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-		dms = {
-			url = "github:AvengeMedia/DankMaterialShell/stable";
-			inputs.nixpkgs.follows = "nixpkgs";
-		};
+    # We be gaming
+    nix-gaming.url = "github:fufexan/nix-gaming";
+  };
 
-		stylix = {
-			url = "github:danth/stylix";
-			inputs.nixpkgs.follows = "nixpkgs";
-		};
+  # Import all .nix files in this directory recursively as flake modules
+  outputs = inputs: let
+    inherit (inputs.nixpkgs) lib;
+    inherit (lib.fileset) toList fileFilter;
 
-		nixvim = {
-			url = "github:nix-community/nixvim";
-			inputs.nixpkgs.follows = "nixpkgs";
-		};
-	};
+    isNixModule = file:
+      file.hasExt "nix"
+      && file.name != "flake.nix"
+      && file.name != "hardware-configuration.nix"
+      && !lib.hasPrefix "_" file.name;
 
-	outputs = { self, nixpkgs, home-manager, stylix, ... }@inputs:
-		let
-			lib = nixpkgs.lib;
-			system = "x86_64-linux";
-			username = "chan";
+    importTree = path:
+      toList (fileFilter isNixModule path);
 
-			mkHost = host: path:
-				lib.nixosSystem {
-					inherit system;
-					specialArgs = { inherit self inputs username host; };
-					modules = [
-						path
-						home-manager.nixosModules.home-manager
-						stylix.nixosModules.stylix
-					];
-				};
-		in {
-			nixosConfigurations = {
-				laptop = mkHost "laptop" ./hosts/laptop;
-				desktop = mkHost "desktop" ./hosts/desktop;
-			};
-		};
+    mkFlake = inputs.flake-parts.lib.mkFlake {inherit inputs;};
+  in
+    mkFlake {imports = importTree ./.;};
 }
