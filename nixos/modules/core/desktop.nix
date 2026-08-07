@@ -1,6 +1,10 @@
-# Desktop stack: Hyprland + Noctalia + Terminal + fonts/locale basics.
 {self, ...}: {
-  flake.nixosModules.desktop = {pkgs, config, lib, ...}: let
+  flake.nixosModules.desktop = {
+    pkgs,
+    config,
+    lib,
+    ...
+  }: let
     selfpkgs = self.packages."${pkgs.stdenv.hostPlatform.system}";
     user = config.preferences.user.name;
 
@@ -26,11 +30,8 @@
     '';
   in {
     imports = [
-      # Hyprland config helper
       self.nixosModules.hyprland
-
       self.nixosModules.gtk
-
       self.nixosModules.audio
     ];
 
@@ -52,7 +53,6 @@
 
     services.libinput.enable = true;
 
-    # Hyprland config
     home.programs.hyprland = {
       enable = true;
       settings = {
@@ -136,7 +136,7 @@
           smart_split = false;
           smart_resizing = true;
         };
-        
+
         gestures = {
           workspace_swipe_touch = true;
           workspace_swipe_distance = 280;
@@ -178,7 +178,6 @@
       };
 
       extraConfig = ''
-        # Workspace navigation (SUPER + number)
         bind = $mod, 1, workspace, 1
         bind = $mod, 2, workspace, 2
         bind = $mod, 3, workspace, 3
@@ -190,7 +189,6 @@
         bind = $mod, 9, workspace, 9
         bind = $mod, 0, workspace, 10
 
-        # Move focused window to workspace (SUPER + SHIFT + number)
         bind = $mod SHIFT, 1, movetoworkspacesilent, 1
         bind = $mod SHIFT, 2, movetoworkspacesilent, 2
         bind = $mod SHIFT, 3, movetoworkspacesilent, 3
@@ -202,33 +200,28 @@
         bind = $mod SHIFT, 9, movetoworkspacesilent, 9
         bind = $mod SHIFT, 0, movetoworkspacesilent, 10
 
-        # Window and session management
         bind = $mod, q, killactive
         bind = $mod, m, exit
         bind = $mod, f, fullscreen
         bind = $mod SHIFT, f, togglefloating
         bind = $mod, p, pseudo
-        bind = $mod, j, layoutmsg, togglesplit
+        bind = $mod, n, layoutmsg, togglesplit
 
-        # Focus navigation
         bind = $mod, h, movefocus, l
         bind = $mod, l, movefocus, r
         bind = $mod, k, movefocus, u
         bind = $mod, j, movefocus, d
 
-        # Move windows
         bind = $mod SHIFT, h, movewindow, l
         bind = $mod SHIFT, l, movewindow, r
         bind = $mod SHIFT, k, movewindow, u
         bind = $mod SHIFT, j, movewindow, d
 
-        # Resize windows
         bind = $mod CTRL, h, resizeactive, -20 0
         bind = $mod CTRL, l, resizeactive, 20 0
         bind = $mod CTRL, k, resizeactive, 0 -20
         bind = $mod CTRL, j, resizeactive, 0 20
 
-        # Monitor navigation and moving windows between monitors
         bind = $mod, comma, focusmonitor, -1
         bind = $mod, period, focusmonitor, +1
         bind = $mod SHIFT, comma, movewindow, mon:-1
@@ -236,7 +229,6 @@
         bind = $mod CTRL, comma, movecurrentworkspacetomonitor, -1
         bind = $mod CTRL, period, movecurrentworkspacetomonitor, +1
 
-        # Mouse drag bindings (hold SUPER + mouse button to move/resize)
         bindm = $mod, mouse:272, movewindow
         bindm = $mod, mouse:273, resizewindow
       '';
@@ -247,12 +239,15 @@
       toMonitor = name: mon:
         if !mon.enabled
         then "${name},disable"
-        else
-          "${name},${toString mon.width}x${toString mon.height}@${toString mon.refreshRate},${toString mon.x}x${toString mon.y},${toString mon.scale}";
+        else "${name},${toString mon.width}x${toString mon.height}@${toString mon.refreshRate},${toString mon.x}x${toString mon.y},${toString mon.scale}";
+      # Hyprland treats the FIRST monitor line as primary, and attrset
+      # iteration order is unspecified — so sort primary monitors first.
+      monitorList = lib.mapAttrsToList (name: mon: {inherit name mon;}) monitors;
+      ordered = (builtins.filter (m: m.mon.primary) monitorList) ++ (builtins.filter (m: !m.mon.primary) monitorList);
     in
       if monitors == {}
       then [",preferred,auto,1"]
-      else lib.mapAttrsToList toMonitor monitors;
+      else map (m: toMonitor m.name m.mon) ordered;
 
     preferences.keymap = {
       "SUPER + t".package = self.packages.${pkgs.stdenv.hostPlatform.system}.terminal;
@@ -264,7 +259,7 @@
     preferences.autostart = [
       self.packages.${pkgs.stdenv.hostPlatform.system}.noctalia-shell
       "hyprctl setcursor ${theme.ui.gtk.cursorName} ${toString theme.ui.gtk.cursorSize}"
-      "wl-paste --watch cliphist store"
+      "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
     ];
 
     hjem.users.${user}.files = {
@@ -275,7 +270,7 @@
         font=JetBrainsMono Nerd Font:size=11
         dpi-aware=yes
 
-        prompt=    
+        prompt=
         terminal=kitty -e
 
         icons-enabled=yes
@@ -316,13 +311,27 @@
       '';
     };
 
+    # Clipboard history as a real user unit (hjem files can't be enabled by
+    # systemd — a plain file in ~/.config/systemd/user/ is never started).
+    systemd.user.services.cliphist = {
+      description = "Clipboard history (cliphist)";
+      wantedBy = ["graphical-session.target"];
+      after = ["graphical-session.target"];
+      partOf = ["graphical-session.target"];
+      serviceConfig = {
+        Type = "simple";
+        ExecStart = "${pkgs.wl-clipboard}/bin/wl-paste --watch ${pkgs.cliphist}/bin/cliphist store";
+        Restart = "on-failure";
+        RestartSec = 3;
+      };
+    };
+
     environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
     environment.systemPackages = with pkgs; [
       selfpkgs.terminal
       selfpkgs.noctalia-shell
 
-      # Viewers and daily desktop tools
       mpv
       imv
       loupe
@@ -331,23 +340,26 @@
       pavucontrol
       fuzzel
 
-      # Clipboard + screenshots
       wl-clipboard
       cliphist
       grim
       slurp
       swappy
+
+      wf-recorder
     ];
 
     fonts.packages = with pkgs; [
       nerd-fonts.jetbrains-mono
       ubuntu-sans
+      noto-fonts-color-emoji
     ];
 
     fonts.fontconfig.defaultFonts = {
       serif = ["Ubuntu Sans"];
       sansSerif = ["Ubuntu Sans"];
       monospace = ["JetBrainsMono Nerd Font"];
+      emoji = ["Noto Color Emoji"];
     };
   };
 }

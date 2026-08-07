@@ -1,5 +1,9 @@
 {inputs, ...}: {
-  flake.nixosModules.nix = {pkgs, config, ...}: let
+  flake.nixosModules.nix = {
+    pkgs,
+    config,
+    ...
+  }: let
     repoDir = config.preferences.paths.repoDir;
   in {
     imports = [
@@ -15,20 +19,26 @@
 
     nix.settings = {
       experimental-features = ["nix-command" "flakes"];
-      auto-optimise-store = true;
-      download-buffer-size = 524288000;
+      # 128 MiB per download worker; the old 500 MiB ballooned RAM when
+      # max-jobs parallel downloads were in flight.
+      download-buffer-size = 134217728;
       trusted-users = ["root" "@wheel"];
     };
+
+    nix.gc = {
+      automatic = true;
+      dates = "weekly";
+      randomizedDelaySec = "6h";
+      options = "--delete-older-than 7d";
+    };
+    nix.optimise.automatic = true;
 
     programs.nix-ld.enable = true;
     nixpkgs.config.allowUnfree = true;
 
     programs.nh = {
       enable = true;
-      clean = {
-        enable = true;
-        extraArgs = "--keep-since 7d --keep 5";
-      };
+      clean.enable = false;
       flake = repoDir;
     };
 

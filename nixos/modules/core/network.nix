@@ -2,23 +2,12 @@
   flake.nixosModules.network = {pkgs, ...}: {
     networking = {
       networkmanager.enable = true;
-      nameservers = [
-        "8.8.8.8"
-        "8.8.4.4"
-        "1.1.1.1"
-      ];
+      # DNS comes from DHCP/NetworkManager so split-DNS, VPN and Tailscale
+      # (MagicDNS) keep working; hardcoded upstreams broke those.
       firewall = {
         enable = true;
         allowedTCPPorts = [
-          22
-          80
-          443
-          59010
-          59011
-        ];
-        allowedUDPPorts = [
-          59010
-          59011
+          22 # SSH (key-only; fail2ban)
         ];
       };
     };

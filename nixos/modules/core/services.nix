@@ -1,5 +1,83 @@
-{...}: {
-  flake.nixosModules.services = {pkgs, ...}: {
+{self, ...}: {
+  flake.nixosModules.services = {
+    pkgs,
+    config,
+    lib,
+    ...
+  }: let
+    theme = self.theme;
+    palette = theme.palette;
+    greeterFont = lib.elemAt (config.fonts.fontconfig.defaultFonts.sansSerif ++ ["Ubuntu Sans"]) 0;
+    regreetCss = pkgs.writeText "regreet.css" ''
+      /* ReGreet theme generated from theme.nix */
+      @define-color background ${palette.base00};
+      @define-color background-alt ${palette.base01};
+      @define-color border ${palette.base02};
+      @define-color foreground ${palette.base06};
+      @define-color foreground-dim ${palette.base04};
+      @define-color accent ${palette.base0D};
+
+      * {
+        color: @foreground;
+      }
+
+      window,
+      window > box {
+        background-color: @background;
+      }
+
+      window > box {
+        padding: 48px;
+      }
+
+      entry,
+      button,
+      combobox,
+      dropdown {
+        background-color: @background-alt;
+        border: 1px solid @border;
+        border-radius: 12px;
+        box-shadow: none;
+        padding: 8px 12px;
+      }
+
+      button {
+        background-image: none;
+      }
+
+      button:hover,
+      button:focus,
+      entry:focus,
+      combobox:focus,
+      dropdown:focus {
+        border-color: @accent;
+      }
+
+      button:checked,
+      button:active {
+        background-color: @accent;
+        color: @background;
+      }
+
+      label {
+        color: @foreground;
+      }
+
+      label.dim-label {
+        color: @foreground-dim;
+      }
+
+      list,
+      list row {
+        background-color: @background-alt;
+        border-radius: 12px;
+      }
+
+      list row:selected {
+        background-color: @border;
+      }
+    '';
+  in {
     users.users.greeter = {
       isSystemUser = true;
       home = "/var/lib/greetd";
@@ -10,11 +88,19 @@
       flatpak.enable = true;
       fwupd.enable = true;
       fstrim.enable = true;
-      openssh.enable = true;
+      fail2ban.enable = true;
       timesyncd.enable = true;
       upower.enable = true;
       udisks2.enable = true;
-      printing.enable = true;
+      printing.enable = config.preferences.services.printing;
+
+      openssh = {
+        enable = true;
+        settings = {
+          PasswordAuthentication = false;
+          KbdInteractiveAuthentication = false;
+        };
+      };
 
       power-profiles-daemon.enable = true;
 
@@ -23,7 +109,6 @@
 
       gnome.gnome-keyring.enable = true;
 
-      # ReGreet relies on AccountsService for user listing.
       accounts-daemon.enable = true;
 
       dbus.packages = with pkgs; [
@@ -47,30 +132,31 @@
       };
     };
 
+    # Gnome keyring unlocks at login; acceptable on a single-user machine.
     security.pam.services.greetd.enableGnomeKeyring = true;
 
-    # ReGreet needs writable state and log directories.
     systemd.tmpfiles.rules = [
       "d /var/lib/regreet 0755 greeter greeter - -"
       "d /var/log/regreet 0755 greeter greeter - -"
     ];
 
+    services.journald.extraConfig = "SystemMaxUse=500M";
+
     environment.etc = {
-      "greetd/regreet.css".source = ./regreet-theme.css;
+      "greetd/regreet.css".source = regreetCss;
       "greetd/regreet.toml".text = ''
-        # Basic ReGreet config with GTK theming and a simple clock.
-        # Keep this file in sync with any theme assets under /etc/greetd.
+        # Generated from theme.nix — do not edit by hand.
 
         [appearance]
         greeting_msg = "Welcome back"
 
         [GTK]
         application_prefer_dark_theme = true
-        theme_name = "Orchis-Purple-Dark"
-        icon_theme_name = "Papirus-Dark"
-        cursor_theme_name = "Bibata-Modern-Ice"
+        theme_name = "${theme.ui.gtk.themeName}"
+        icon_theme_name = "${theme.ui.gtk.iconThemeName}"
+        cursor_theme_name = "${theme.ui.gtk.cursorName}"
         cursor_blink = true
-        font_name = "Ubuntu Sans"
+        font_name = "${greeterFont}"
 
         [widget.clock]
         format = "%a %b %d  %H:%M"

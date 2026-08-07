@@ -1,8 +1,17 @@
 # Hyprland helpers: translate structured keymaps + settings into hyprland.conf
-{lib, self, ...}: let
+{
+  lib,
+  self,
+  ...
+}: let
   inherit (self.lib.generators) toHyprconf;
 in {
-  flake.nixosModules.hyprland = {lib, config, pkgs, ...}: let
+  flake.nixosModules.hyprland = {
+    lib,
+    config,
+    pkgs,
+    ...
+  }: let
     user = config.preferences.user.name;
     cfg = config.home.programs.hyprland;
   in {
@@ -101,7 +110,11 @@ in {
 
   # Helper: convert attrsets into Hyprland config syntax.
   # Source adapted from home-manager Hyprland module.
-  flake.lib.generators.toHyprconf = {attrs, indentLevel ? 0, importantPrefixes ? ["$" "bezier"],}: let
+  flake.lib.generators.toHyprconf = {
+    attrs,
+    indentLevel ? 0,
+    importantPrefixes ? ["$" "bezier"],
+  }: let
     inherit
       (lib)
       all

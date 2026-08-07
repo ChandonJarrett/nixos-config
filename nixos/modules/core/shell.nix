@@ -1,5 +1,13 @@
-{lib, self, ...}: {
-  flake.nixosModules.shell = {pkgs, config, ...}: let
+{
+  lib,
+  self,
+  ...
+}: {
+  flake.nixosModules.shell = {
+    pkgs,
+    config,
+    ...
+  }: let
     repoDir = config.preferences.paths.repoDir;
   in {
     programs.fish = {
