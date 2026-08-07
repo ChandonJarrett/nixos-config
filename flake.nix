@@ -2,27 +2,25 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-    # Module imports system and helpers
     flake-parts.url = "github:hercules-ci/flake-parts";
 
-    # System-wide nix-index database
     nix-index-database = {
       url = "github:Mic92/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Package wrapping framework
     wrappers.url = "github:Lassulus/wrappers";
     wrapper-modules.url = "github:BirdeeHub/nix-wrapper-modules";
 
-    # Home configuration helper
     hjem = {
       url = "github:feel-co/hjem";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # We be gaming
-    nix-gaming.url = "github:fufexan/nix-gaming";
+    agenix = {
+      url = "github:ryantm/agenix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   # Import all .nix files in this directory recursively as flake modules

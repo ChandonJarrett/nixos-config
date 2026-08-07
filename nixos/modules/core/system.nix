@@ -2,6 +2,7 @@
   flake.nixosModules.system = {
     imports = [
       self.nixosModules.hjem
+      self.nixosModules.secrets
       self.nixosModules.nix
       self.nixosModules.shell
       self.nixosModules.network
