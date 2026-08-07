@@ -1,6 +1,10 @@
 # Base options: shared preferences and metadata
 {
-  flake.nixosModules.base = {lib, pkgs, ...}: {
+  flake.nixosModules.base = {
+    lib,
+    pkgs,
+    ...
+  }: {
     options.preferences = {
       user.name = lib.mkOption {
         type = lib.types.str;
@@ -18,8 +22,12 @@
       };
 
       user.initialPassword = lib.mkOption {
-        type = lib.types.str;
-        default = "changeme";
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = ''
+          One-time bootstrap password, used only while no agenix password
+          secret exists for this host (see .agenix/README.md).
+        '';
       };
 
       user.homeDirs = lib.mkOption {
@@ -87,6 +95,20 @@
           "SUPER + d"."f".exec = "firefox";
         };
       };
+
+      devtools = {
+        node = lib.mkEnableOption "Node.js/TypeScript toolchain";
+        python = lib.mkEnableOption "Python toolchain";
+        rust = lib.mkEnableOption "Rust toolchain";
+        go = lib.mkEnableOption "Go toolchain";
+        cc = lib.mkEnableOption "C/C++ toolchain";
+        java = lib.mkEnableOption "Java toolchain (JDK, Maven, Gradle)";
+        mobile = lib.mkEnableOption "Mobile/device tools (Android)";
+      };
+
+      services.printing = (lib.mkEnableOption "print server (CUPS)") // {default = true;};
+
+      hardware.bluetooth = (lib.mkEnableOption "Bluetooth power-on at boot") // {default = true;};
 
       autostart = lib.mkOption {
         # String command or a package
