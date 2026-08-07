@@ -1,0 +1,65 @@
+{
+  "workbench.colorTheme": "Default Dark Modern",
+  "workbench.iconTheme": "vscode-icons",
+
+  "editor.fontFamily": "JetBrainsMono Nerd Font",
+  "editor.fontLigatures": true,
+
+  "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font",
+
+  "workbench.colorCustomizations": {
+    "button.background": "@base0D@",
+    "button.hoverBackground": "@base0E@",
+    "button.foreground": "@base00@",
+    "button.secondaryBackground": "@base02@",
+    "button.secondaryHoverBackground": "@base03@"
+  },
+
+  "editor.tokenColorCustomizations": {
+    "textMateRules": [
+      {
+        "scope": "comment",
+        "settings": {
+          "foreground": "@base03@",
+          "fontStyle": "italic"
+        }
+      },
+      {
+        "scope": "string",
+        "settings": {
+          "foreground": "@base0B@"
+        }
+      },
+      {
+        "scope": ["constant", "constant.numeric", "constant.character", "constant.language", "constant.other"],
+        "settings": {
+          "foreground": "@base09@"
+        }
+      },
+      {
+        "scope": ["keyword", "keyword.control", "keyword.operator", "storage", "storage.type"],
+        "settings": {
+          "foreground": "@base0E@"
+        }
+      },
+      {
+        "scope": ["entity.name.function", "support.function"],
+        "settings": {
+          "foreground": "@base0D@"
+        }
+      },
+      {
+        "scope": ["entity.name.type", "support.type", "support.class", "storage.type"],
+        "settings": {
+          "foreground": "@base0A@"
+        }
+      },
+      {
+        "scope": ["variable", "variable.parameter", "variable.other"],
+        "settings": {
+          "foreground": "@base05@"
+        }
+      }
+    ]
+  }
+}
