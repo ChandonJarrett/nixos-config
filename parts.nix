@@ -18,10 +18,23 @@
       "x86_64-darwin"
       "x86_64-linux"
     ];
-    perSystem = { system, ... }: {
+    perSystem = {
+      system,
+      pkgs,
+      ...
+    }: {
       _module.args.pkgs = import inputs.nixpkgs {
         inherit system;
         config.allowUnfree = true;
+      };
+
+      formatter = pkgs.alejandra;
+
+      # Used by .agenix/rotate-password.sh so it runs this flake's own
+      # nixpkgs instead of the nixpkgs registry.
+      packages = {
+        mkpasswd = pkgs.whois;
+        age = pkgs.age;
       };
     };
   };

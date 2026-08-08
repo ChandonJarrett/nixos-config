@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Pre-commit hook: check formatting and flake validity before committing.
+#
+# Runs only when the staged changes touch Nix sources (any *.nix or flake.lock),
+# so docs-only commits stay fast.
+#
+# Install once per clone by pointing git at this directory:
+#
+#   git config core.hooksPath hooks
+#
+# Bypass with: git commit --no-verify
+set -euo pipefail
+
+cd "$(git rev-parse --show-toplevel)"
+
+# Nothing Nix-related staged → skip the expensive checks.
+if ! git diff --cached --name-only | grep -Eq '\.nix$|flake\.lock$'; then
+  exit 0
+fi
+
+system="$(nix eval --raw --impure --expr 'builtins.currentSystem')"
+
+echo "── pre-commit: nix fmt --check"
+# `nix fmt --check` requires a newer Nix than 2.34.7, so run the flake's
+# alejandra formatter directly (this is exactly what `nix fmt` invokes).
+nix run ".#formatter.${system}" -- --check .
+
+echo "── pre-commit: nix flake check --no-build"
+nix flake check --no-build
+
+echo "── pre-commit: all checks passed"

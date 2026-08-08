@@ -21,7 +21,7 @@
         set info size:time
         set period 1
         set scrolloff 8
- 
+
         # Sorting
         set sortby natural
         setlocal ~/Downloads/ sortby time
@@ -43,11 +43,9 @@
           esac
         }}
 
-        # Safer delete: trash if available, otherwise prompt rm
+        # Move to trash (trash-cli); recover with `trash-restore`
         cmd trash &{{
-          printf "Delete permanently? [y/N] "
-          read ans
-          test "$ans" = y && rm -rf -- "$fx"
+          trash -- "$fx"
         }}
 
         # Convenience commands
@@ -114,6 +112,9 @@
         unrar
         trash-cli
         wl-clipboard
+        # lf runs shell commands (%/&) via `set shell fish` — it must be on PATH
+        # inside the wrapper regardless of the ambient environment.
+        fish
       ];
 
       flags = {

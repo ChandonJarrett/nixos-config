@@ -1,0 +1,105 @@
+add_newline = true
+palette = "chan"
+
+format = """
+[╭─](bold fg:purple_bright)\
+[](fg:base0E)\
+$os\
+[ ](fg:base0E bg:base0D)\
+$directory\
+[ ](fg:base0D bg:purple_dark)\
+$git_branch\
+$git_status\
+[ ](fg:purple_dark bg:purple_deep)\
+$nix_shell\
+$direnv\
+[](fg:purple_deep)\
+$fill\
+$cmd_duration
+[╰─](bold fg:purple_bright)\
+$character
+"""
+
+[palettes.chan]
+base00 = "@base00@"
+base01 = "@base01@"
+base02 = "@base02@"
+base03 = "@base03@"
+base04 = "@base04@"
+base05 = "@base05@"
+base06 = "@base06@"
+base07 = "@base07@"
+base08 = "@base08@"
+base09 = "@base09@"
+base0a = "@base0A@"
+base0b = "@base0B@"
+base0c = "@base0C@"
+base0d = "@base0D@"
+base0e = "@base0E@"
+base0f = "@base0F@"
+
+# Extra purple shades
+purple_bright = "@purpleBright@"
+purple_dark = "@purpleDark@"
+purple_deep = "@purpleDeep@"
+
+[fill]
+symbol = " "
+
+[os]
+disabled = false
+format = "[ ](fg:purple_deep bg:base0E)"
+
+[directory]
+format = "[$path ](bold fg:base07 bg:base0D)"
+truncation_length = 3
+truncation_symbol = "../"
+home_symbol = "~"
+
+[git_branch]
+symbol = " "
+format = "[$symbol$branch](bold fg:purple_bright bg:purple_dark)"
+
+[git_status]
+format = "[ $all_status$ahead_behind](bold fg:purple_bright bg:purple_dark)"
+
+[nix_shell]
+symbol = " "
+format = "[$symbol$state ](fg:base04 bg:purple_deep)"
+
+[direnv]
+disabled = false
+format = "[ direnv ](fg:base04 bg:purple_deep)[](fg:purple_deep)"
+
+[cmd_duration]
+min_time = 500
+show_milliseconds = true
+format = "[](fg:base02)[$duration](fg:base0D bg:base02)[ ](fg:base02)"
+
+[character]
+success_symbol = "[](bold fg:purple_bright)"
+error_symbol = "[](bold fg:base08)"
+
+[package]
+disabled = true
+
+[nodejs]
+disabled = true
+
+[python]
+disabled = true
+
+[rust]
+disabled = true
+
+[golang]
+disabled = true
+
+[java]
+disabled = true
+
+[docker_context]
+disabled = true
+
+[kubernetes]
+disabled = true

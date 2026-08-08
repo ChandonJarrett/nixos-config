@@ -54,7 +54,9 @@ in {
         open_url_with = "default";
 
         allow_remote_control = "yes";
-        listen_on = "unix:/tmp/kitty";
+        # Per-user socket (kitty expands $USER); the old /tmp/kitty path was
+        # shared by every local user.
+        listen_on = "unix:/tmp/kitty-$USER";
         shell_integration = "enabled";
         allow_hyperlinks = "yes";
 

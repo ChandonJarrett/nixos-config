@@ -21,15 +21,10 @@
       package = self'.packages.fish;
 
       runtimeInputs = [
-        # nix
-        pkgs.nil
-        pkgs.nixd
-        pkgs.statix
+        # nix tooling lives in nixos/modules/core/nix.nix (systemPackages);
+        # only deadnix stays here (used by the shell linters, not duplicated
+        # there).
         pkgs.deadnix
-        pkgs.alejandra
-        pkgs.manix
-        pkgs.nix-inspect
-        pkgs.nh
 
         # shell / cli basics
         pkgs.file
@@ -67,6 +62,8 @@
         pkgs.shfmt
         pkgs.shellcheck
         pkgs.taplo
+        pkgs.ruff
+        pkgs.prettier
 
         # language servers
         pkgs.lua-language-server
@@ -74,6 +71,10 @@
         pkgs.vscode-langservers-extracted
         pkgs.yaml-language-server
         pkgs.marksman
+        pkgs.pyright
+
+        # container orchestration
+        pkgs.docker-compose
 
         # wrapped
         self'.packages.neovim
