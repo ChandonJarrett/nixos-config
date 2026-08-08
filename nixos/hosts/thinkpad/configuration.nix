@@ -14,18 +14,31 @@
     ];
   };
 
-  flake.nixosModules.hostThinkpad = {pkgs, ...}: {
+  flake.nixosModules.hostThinkpad = {
+    pkgs,
+    lib,
+    ...
+  }: {
     imports = [
       self.nixosModules.base
       self.nixosModules.system
       self.nixosModules.desktop
       self.nixosModules.apps
-      
+
       self.nixosModules.hostShared
       ./hardware-configuration.nix
     ];
 
     networking.hostName = "thinkpad";
+
+    # Developer toolchains (java/mobile intentionally off).
+    preferences.devtools = {
+      node = true;
+      python = true;
+      rust = true;
+      go = true;
+      cc = true;
+    };
 
     preferences.monitors = {
       "eDP-1" = {
@@ -45,12 +58,28 @@
       enable = true;
       efiSupport = true;
       efiInstallAsRemovable = true;
-      devices = [ "nodev" ];
+      devices = ["nodev"];
     };
+
+    networking.networkmanager.wifi.powersave = false;
 
     services = {
       libinput.enable = true;
       fprintd.enable = true;
+
+      tlp = {
+        enable = true;
+        settings = {
+          PLATFORM_PROFILE_ON_AC = "performance";
+          PLATFORM_PROFILE_ON_BAT = "low-power";
+        };
+      };
+      power-profiles-daemon.enable = lib.mkForce false;
+    };
+
+    security.pam.services = {
+      login.fprintAuth = true;
+      sudo.fprintAuth = true;
     };
 
     environment.systemPackages = with pkgs; [

@@ -1,6 +1,9 @@
-# Shared host defaults
 {...}: {
-  flake.nixosModules.hostShared = {pkgs, ...}: {
+  flake.nixosModules.hostShared = {
+    pkgs,
+    config,
+    ...
+  }: {
     boot = {
       supportedFilesystems.ntfs = true;
       kernelPackages = pkgs.linuxPackages_latest;
@@ -18,10 +21,16 @@
       graphics.enable32Bit = true;
 
       enableAllFirmware = true;
+      # Pulls in redistributable microcode (intel/amd); the generated
+      # hardware-configuration.nix files wire updateMicrocode to this.
+      enableRedistributableFirmware = true;
 
       bluetooth.enable = true;
-      bluetooth.powerOnBoot = true;
+      bluetooth.powerOnBoot = config.preferences.hardware.bluetooth;
     };
+
+    # 12-thread desktop CPUs on both hosts.
+    nix.settings.max-jobs = 12;
 
     zramSwap = {
       enable = true;
@@ -34,10 +43,6 @@
     environment.systemPackages = with pkgs; [
       pciutils
       usbutils
-
-      winetricks
-      glib
-      android-tools
     ];
   };
 }
