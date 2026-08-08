@@ -9,11 +9,12 @@ Each host provides a `configuration.nix` and a `hardware-configuration.nix`. The
    - `networking.hostName`
    - `system.stateVersion`
    - `preferences.user.name` / `preferences.user.fullName` / `preferences.user.email`
-   - `preferences.user.initialPassword`
    - `preferences.monitors` (if needed)
-   - `preferences.apps.*` (optional toggles)
+   - `preferences.apps.*` and `preferences.devtools.*` (optional toggles)
 3. Ensure the host imports the shared defaults, core system module, and its hardware file.
-4. Rebuild:
+4. Generate the password secret on the machine (`.agenix/rotate-password.sh`)
+   and `git add` the resulting `.age` file — see `.agenix/README.md`.
+5. Rebuild:
 
 ```
 sudo nixos-rebuild switch --flake .#<host>

@@ -16,19 +16,26 @@ Declarative NixOS configuration for daily use and development. This repo is inte
    - `networking.hostName`
    - `system.stateVersion`
    - `preferences.user.name`, `preferences.user.fullName`, `preferences.user.email`
-   - `preferences.user.initialPassword`
    - `preferences.monitors` (if needed)
-   - `preferences.apps.*` (optional toggles)
-3. Rebuild and switch:
+   - `preferences.apps.*` and `preferences.devtools.*` (optional toggles)
+3. Generate the password secret **on the machine** (encrypted for its SSH
+   host key):
+
+```
+./.agenix/rotate-password.sh
+```
+
+   See `.agenix/README.md` for details and troubleshooting.
+4. Rebuild and switch:
 
 ```
 sudo nixos-rebuild switch --flake .#<host>
 ```
 
-4. On first login, change the password:
+5. Git-add the new secret before rebuilding (flakes only see tracked files):
 
 ```
-passwd
+git add .agenix/userPassword.<host>.age
 ```
 
 ## Structure
@@ -67,4 +74,17 @@ Update inputs:
 
 ```
 nix flake update
+```
+
+Format all Nix files:
+
+```
+nix fmt
+```
+
+Enable the pre-commit hook (formatting + flake check on every commit that
+touches Nix sources) once per clone:
+
+```
+git config core.hooksPath hooks
 ```
